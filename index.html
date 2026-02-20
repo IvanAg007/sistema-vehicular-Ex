@@ -11,41 +11,6 @@
 <link rel="stylesheet" href="css/styles.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-html, body{
-    height: 100%;
-    margin: 0;
-}
-
-/* Espacio para que el footer no tape contenido */
-.app-layout{
-    min-height: 100vh;
-    padding-bottom: 60px;
-}
-
-/* FOOTER FIJO INFERIOR */
-.global-footer{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 50px;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    letter-spacing: 1px;
-    border-top: 1px solid #00f5ff;
-    z-index: 999;
-}
-
-.global-footer strong{
-    color: #00f5ff;
-}
-</style>
-
 </head>
 
 <body>
@@ -58,8 +23,12 @@ html, body{
     <div class="left-panel">
         <div class="curve-wrapper">
 
-            <svg class="curve-svg" viewBox="0 0 500 900" preserveAspectRatio="none">
-                <path d="M60 0 Q720 450 60 900" class="curve-path"/>
+            <svg class="curve-svg" viewBox="0 0 600 900" preserveAspectRatio="none">
+
+                <path d="M120 0 Q520 450 120 900" class="curve-glow"/>
+                <path d="M140 0 Q540 450 140 900" class="curve-main"/>
+                <path d="M160 0 Q560 450 160 900" class="curve-secondary"/>
+
             </svg>
 
             <img src="img/logo.png" class="main-logo">
@@ -90,6 +59,10 @@ html, body{
             <div class="tab-section active" id="admin">
                 <h2>Administración de Vehículos</h2>
 
+                <div class="admin-stats mb-3">
+                    🚗 Total Vehículos: <strong id="totalCars">0</strong>
+                </div>
+
                 <div class="p-4 mb-4">
                     <input type="hidden" id="carId">
 
@@ -98,28 +71,28 @@ html, body{
                         <div class="col-md-3">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="brand" placeholder="Marca">
-                                <label for="brand">Marca</label>
+                                <label>Marca</label>
                             </div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="model" placeholder="Modelo">
-                                <label for="model">Modelo</label>
+                                <label>Modelo</label>
                             </div>
                         </div>
 
                         <div class="col-md-2">
                             <div class="form-floating">
                                 <input type="number" class="form-control" id="year" placeholder="Año">
-                                <label for="year">Año</label>
+                                <label>Año</label>
                             </div>
                         </div>
 
                         <div class="col-md-2">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="plates" placeholder="Placas">
-                                <label for="plates">Placas</label>
+                                <label>Placas</label>
                             </div>
                         </div>
 
@@ -135,13 +108,13 @@ html, body{
                 <table class="table table-dark text-center futuristic-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Marca</th>
-                            <th>Modelo</th>
-                            <th>Año</th>
-                            <th>Placas</th>
-                            <th>Acciones</th>
-                            <th>Simulación</th>
+                            <th>🆔 ID</th>
+                            <th>🚗 Marca</th>
+                            <th>📘 Modelo</th>
+                            <th>📅 Año</th>
+                            <th>🔖 Placas</th>
+                            <th>⚙ Acciones</th>
+                            <th>🚨 Simulación</th>
                         </tr>
                     </thead>
                     <tbody id="carTable"></tbody>
@@ -156,22 +129,40 @@ html, body{
             <!-- MONITOREO -->
             <div class="tab-section" id="monitor">
 
-                <div class="d-flex justify-content-center mb-4">
-                    <canvas id="statusChart" class="global-chart"></canvas>
+                <div class="monitor-stats">
+                    <div class="monitor-card">
+                        <h3 id="totalMonitor">0</h3>
+                        <span>Vehículos Totales</span>
+                    </div>
+                    <div class="monitor-card normal">
+                        <h3 id="normalMonitor">0</h3>
+                        <span>Estado Normal</span>
+                    </div>
+                    <div class="monitor-card alert">
+                        <h3 id="alertMonitor">0</h3>
+                        <span>En Alerta</span>
+                    </div>
+                </div>
+
+                <div class="global-chart-wrapper">
+                    <canvas id="statusChart"></canvas>
                 </div>
 
                 <div class="row mt-4" id="monitorCharts"></div>
 
-                <table class="table table-dark text-center mt-4 futuristic-table">
-                    <thead>
-                        <tr>
-                            <th>Vehículo</th>
-                            <th>Evento</th>
-                            <th>Fecha</th>
-                        </tr>
-                    </thead>
-                    <tbody id="eventTable"></tbody>
-                </table>
+                <div class="monitor-history">
+                    <h4>Historial de Eventos</h4>
+                    <table class="table table-dark text-center futuristic-table">
+                        <thead>
+                            <tr>
+                                <th>🚗 Vehículo</th>
+                                <th>📡 Evento</th>
+                                <th>📅 Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventTable"></tbody>
+                    </table>
+                </div>
 
             </div>
 
@@ -180,11 +171,10 @@ html, body{
 
 </div>
 
-<!-- FOOTER GLOBAL FIJO -->
-<div class="global-footer">
+<footer class="global-footer">
     © 2026 SmartSecure Car | Desarrollado por 
     <strong>AGUILAR PEREZ IVAN</strong>
-</div>
+</footer>
 
 <script>
 function changeTab(tabId, element){

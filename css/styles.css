@@ -3,111 +3,107 @@
 /* ========================= */
 
 body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:#0a0f1c;
-color:white;
-overflow:hidden;
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:#0a0f1c;
+    color:white;
+    overflow-x:hidden;
+
+    /* Layout vertical correcto */
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
 }
 
+/* GRID DE FONDO */
+
 .background-grid{
-position:fixed;
-width:100%;
-height:100%;
-background-image:
-linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px);
-background-size:50px 50px;
-z-index:0;
+    position:fixed;
+    width:100%;
+    height:100%;
+    background-image:
+        linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+    background-size:50px 50px;
+    z-index:0;
 }
 
 /* ========================= */
-/* LAYOUT */
+/* LAYOUT PRINCIPAL */
 /* ========================= */
 
 .app-layout{
-display:flex;
-height:100vh;
-padding:40px;
-gap:40px;
-position:relative;
-z-index:1;
+    display:flex;
+    flex:1; /* Empuja footer hacia abajo */
+    padding:40px;
+    gap:40px;
+    position:relative;
+    z-index:1;
 }
 
 .left-panel{
-flex:1.1;
-position:relative;
+    flex:1.1;
+    position:relative;
 }
+
+.right-panel{
+    flex:1.9;
+}
+
+/* ========================= */
+/* CURVAS (ESTABLES) */
+/* ========================= */
 
 .curve-wrapper{
-position:relative;
-width:600px;
-height:900px;
+    position:relative;
+    width:800px;
+    height:900px;
 }
-
-/* ========================= */
-/* CURVA NEON + ENERGIA */
-/* ========================= */
 
 .curve-svg{
-position:absolute;
-width:100%;
-height:100%;
+    position:absolute;
+    width:100%;
+    height:100%;
 }
 
-.curve-path{
-fill:none;
-stroke:#00f0ff;
-stroke-width:4;
-stroke-linecap:round;
-
-/* Glow fijo (sin animación para evitar parpadeo) */
-filter:
-drop-shadow(0 0 10px #00f0ff)
-drop-shadow(0 0 30px #00f0ff)
-drop-shadow(0 0 60px rgba(0,255,255,0.8));
-
-/* Energía fluida */
-stroke-dasharray:120 600;
-animation: energyFlow 6s linear infinite;
+.curve-glow{
+    fill:none;
+    stroke:rgba(0,240,255,0.15);
+    stroke-width:10;
+    filter:blur(8px);
 }
 
-@keyframes energyFlow{
-from{ stroke-dashoffset:0; }
-to{ stroke-dashoffset:-800; }
+.curve-main{
+    fill:none;
+    stroke:#00f0ff;
+    stroke-width:4;
+    stroke-linecap:round;
+    filter:
+        drop-shadow(0 0 8px #00f0ff)
+        drop-shadow(0 0 20px rgba(0,255,255,0.6));
+}
+
+.curve-secondary{
+    fill:none;
+    stroke:rgba(0,240,255,0.5);
+    stroke-width:2;
+    stroke-linecap:round;
 }
 
 /* ========================= */
-/* LOGO ANIMADO */
+/* LOGO */
 /* ========================= */
 
 .main-logo{
-position:absolute;
-left:10px;
-top:50%;
-transform:translateY(-50%);
-width:340px;
-z-index:3;
-
-filter:
-drop-shadow(0 0 15px #00f0ff)
-drop-shadow(0 0 40px #00f0ff)
-drop-shadow(0 0 80px rgba(0,255,255,0.6));
-
-animation:
-logoEntrance 1.2s ease-out forwards,
-logoFloat 4s ease-in-out infinite;
-}
-
-@keyframes logoEntrance{
-0%{ opacity:0; transform:translateY(-50%) scale(0.8); }
-100%{ opacity:1; transform:translateY(-50%) scale(1); }
-}
-
-@keyframes logoFloat{
-0%{ transform:translateY(-50%) translateY(0px); }
-50%{ transform:translateY(-50%) translateY(-10px); }
-100%{ transform:translateY(-50%) translateY(0px); }
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:300px;
+    z-index:3;
+    filter:
+        drop-shadow(0 0 15px #00f0ff)
+        drop-shadow(0 0 40px #00f0ff);
 }
 
 /* ========================= */
@@ -115,49 +111,52 @@ logoFloat 4s ease-in-out infinite;
 /* ========================= */
 
 .nav-btn{
-position:absolute;
-background:#0a0f1c;
-border:2px solid #00f0ff;
-color:#00f0ff;
-padding:10px 22px;
-border-radius:30px;
-cursor:pointer;
-transition:0.3s ease;
-z-index:5;
-transform:translate(-50%, -50%);
+    position:absolute;
+    background:#0a0f1c;
+    border:2px solid #00f0ff;
+    color:#00f0ff;
+    padding:10px 22px;
+    border-radius:30px;
+    cursor:pointer;
+    transition:0.3s ease;
+    z-index:5;
+    transform:translate(-50%, -50%);
 }
 
 .nav-btn:hover{
-background:#00f0ff;
-color:#000;
-box-shadow:0 0 20px #00f0ff;
+    background:#00f0ff;
+    color:#000;
+    box-shadow:0 0 20px #00f0ff;
 }
 
 .nav-btn.active{
-background:#00f0ff;
-color:#000;
-box-shadow:0 0 40px #00f0ff;
+    background:#00f0ff;
+    color:#000;
+    box-shadow:0 0 40px #00f0ff;
 }
 
-.admin{ top:150px; left:300px; }
-.control{ top:450px; left:500px; }
-.monitor{ top:750px; left:300px; }
+/* Posiciones alineadas con curva */
+
+.admin{ top:150px; left:350px; }
+.control{ top:450px; left:450px; }
+.monitor{ top:750px; left:350px; }
 
 /* ========================= */
 /* PANEL DERECHO */
 /* ========================= */
 
-.right-panel{
-flex:1.9;
-}
-
 .content-panel{
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(20px);
-border-radius:20px;
-padding:30px;
-height:100%;
-overflow:auto;
+    background: linear-gradient(
+        145deg,
+        rgba(15,25,45,0.9),
+        rgba(10,15,28,0.9)
+    );
+    backdrop-filter:blur(20px);
+    border-radius:25px;
+    padding:35px;
+    overflow:auto;
+    border:1px solid rgba(0,255,255,0.2);
+    height:calc(100vh - 120px);
 }
 
 .tab-section{ display:none; }
@@ -168,58 +167,52 @@ overflow:auto;
 /* ========================= */
 
 #admin h2{
-font-size:28px;
-margin-bottom:25px;
-color:#00f0ff;
-text-shadow:0 0 15px #00f0ff;
+    color:#00f0ff;
+    text-shadow:0 0 10px #00f0ff;
 }
 
-/* INPUTS */
+.admin-stats{
+    color:#00f0ff;
+    margin-bottom:15px;
+}
 
 #admin .form-control{
-background:rgba(255,255,255,0.05);
-border:1px solid rgba(0,255,255,0.4);
-color:#fff;
-border-radius:12px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(0,255,255,0.4);
+    color:#fff;
+    border-radius:12px;
 }
 
 #admin .form-control:focus{
-border-color:#00f0ff;
-box-shadow:0 0 15px #00f0ff;
+    border-color:#00f0ff;
+    box-shadow:0 0 10px #00f0ff;
 }
-
-/* BOTON GUARDAR */
 
 #admin .btn-primary{
-background:#00f0ff;
-border:none;
-border-radius:12px;
-color:#000;
+    background:linear-gradient(135deg,#00f0ff,#00c6ff);
+    border:none;
+    border-radius:12px;
+    color:#000;
+    font-weight:600;
 }
-
-#admin .btn-primary:hover{
-box-shadow:0 0 20px #00f0ff;
-}
-
-/* TABLA */
 
 .futuristic-table{
-background:rgba(255,255,255,0.03);
-border-radius:20px;
-overflow:hidden;
+    background:rgba(255,255,255,0.03);
+    border-radius:20px;
+    overflow:hidden;
 }
 
 .futuristic-table thead{
-background:rgba(0,255,255,0.1);
+    background:rgba(0,255,255,0.1);
 }
 
 .futuristic-table th{
-color:#00f0ff;
-border:none;
+    color:#00f0ff;
+    border:none;
 }
 
 .futuristic-table tbody tr:hover{
-background:rgba(0,255,255,0.07);
+    background:rgba(0,255,255,0.07);
 }
 
 /* ========================= */
@@ -227,99 +220,130 @@ background:rgba(0,255,255,0.07);
 /* ========================= */
 
 #control .row{
-gap:25px;
+    gap:30px;
 }
 
-/* CARD */
-
 #control .card{
-background:rgba(255,255,255,0.04);
-border:1px solid rgba(0,255,255,0.2);
-border-radius:18px;
-padding:20px;
-transition:0.3s ease;
-color:white;
+    background: linear-gradient(
+        145deg,
+        rgba(15,25,45,0.95),
+        rgba(10,15,28,0.95)
+    );
+    border: 1px solid rgba(0,255,255,0.2);
+    border-radius: 22px;
+    padding: 25px;
+    transition: all 0.35s ease;
+    color: white;
+    backdrop-filter: blur(15px);
+    position:relative;
 }
 
 #control .card:hover{
-transform:translateY(-8px);
-border-color:#00f0ff;
-box-shadow:
-0 0 20px rgba(0,255,255,0.3),
-0 0 50px rgba(0,255,255,0.2);
+    transform: translateY(-10px);
+    border-color:#00f0ff;
+    box-shadow:
+        0 0 25px rgba(0,255,255,0.4),
+        0 0 60px rgba(0,255,255,0.2);
 }
-
-/* TITULO VEHICULO */
 
 #control .card h5{
-color:#00f0ff;
-text-align:center;
-margin-bottom:15px;
-}
-
-/* BOTON MOTOR */
-
-#control .btn-success{
-background:linear-gradient(135deg,#00f0ff,#00c6ff);
-border:none;
-border-radius:12px;
-color:#000;
-}
-
-#control .btn-success:hover{
-transform:scale(1.05);
-box-shadow:0 0 20px #00f0ff;
-}
-
-/* BOTON CAMARAS */
-
-#control .btn-info{
-background:rgba(0,255,255,0.2);
-border:1px solid #00f0ff;
-color:#00f0ff;
-border-radius:12px;
-}
-
-#control .btn-info:hover{
-background:#00f0ff;
-color:#000;
-box-shadow:0 0 20px #00f0ff;
-}
-/* ========================= */
-/* GRAFICAS INDIVIDUALES */
-/* ========================= */
-
-
-.monitor-chart{
-width:220px !important;
-height:220px !important;
-margin:15px auto;
-display:block;
-}
-/* ========================= */
-/* FOOTER CORRECTO */
-/* ========================= */
-
-body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-}
-
-.app-layout{
-    flex:1;
-}
-
-.app-footer{
-    text-align:center;
-    padding:15px 0;
-    font-size:14px;
     color:#00f0ff;
-    background:rgba(0,0,0,0.4);
-    backdrop-filter:blur(10px);
+    text-align:center;
+    margin-bottom:20px;
 }
 
-.app-footer strong{
-    color:white;
+.status-indicator{
+    position:absolute;
+    top:15px;
+    right:15px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+}
+
+.status-on{
+    background:#00ff88;
+    box-shadow:0 0 10px #00ff88;
+}
+
+.status-off{
+    background:#ff4444;
+    box-shadow:0 0 10px #ff4444;
+}
+
+/* ========================= */
+/* MONITOREO */
+/* ========================= */
+
+.monitor-stats{
+    display:flex;
+    gap:25px;
+    margin-bottom:35px;
+}
+
+.monitor-card{
+    flex:1;
+    background:linear-gradient(
+        145deg,
+        rgba(15,25,45,0.9),
+        rgba(10,15,28,0.9)
+    );
+    border:1px solid rgba(0,255,255,0.2);
+    border-radius:20px;
+    padding:25px;
+    text-align:center;
+    transition:0.3s ease;
+}
+
+.monitor-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 0 25px rgba(0,255,255,0.3);
+}
+
+.monitor-card h3{
+    font-size:32px;
+    margin:0;
+    color:#00f0ff;
+}
+
+.monitor-card.normal h3{
+    color:#00ff88;
+}
+
+.monitor-card.alert h3{
+    color:#ff4444;
+}
+
+.global-chart-wrapper{
+    background:rgba(255,255,255,0.03);
+    border-radius:20px;
+    padding:25px;
+    border:1px solid rgba(0,255,255,0.2);
+    display:flex;
+    justify-content:center;
+    margin-bottom:30px;
+}
+
+.monitor-history h4{
+    color:#00f0ff;
+    margin-bottom:20px;
+}
+
+/* ========================= */
+/* FOOTER DINÁMICO */
+/* ========================= */
+
+.global-footer{
+    width:100%;
+    height:50px;
+    background:rgba(0,0,0,0.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-top:1px solid #00f5ff;
+    font-size:14px;
+}
+
+.global-footer strong{
+    color:#00f5ff;
 }

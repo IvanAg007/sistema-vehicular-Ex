@@ -6,6 +6,7 @@ let globalChart;
 let carCharts={};
 let carsCache=[];
 
+// ================= REFRESH AUTOMÁTICO =================
 setInterval(loadAll,2000);
 loadAll();
 
@@ -23,17 +24,21 @@ const cars=await res.json();
 
 carsCache=cars;
 
+const totalAdmin = document.getElementById("totalCars");
+if(totalAdmin) totalAdmin.innerText = cars.length;
+
 const table=document.getElementById("carTable");
 const control=document.getElementById("controlContainer");
 const monitorContainer=document.getElementById("monitorCharts");
 
-table.innerHTML="";
-control.innerHTML="";
+if(table) table.innerHTML="";
+if(control) control.innerHTML="";
 if(monitorContainer) monitorContainer.innerHTML="";
 
 cars.forEach(car=>{
 
 // ===== ADMIN =====
+if(table){
 table.innerHTML+=`
 <tr>
 <td>${car.id}</td>
@@ -52,8 +57,10 @@ table.innerHTML+=`
 </td>
 </tr>
 `;
+}
 
 // ===== CONTROL =====
+if(control){
 control.innerHTML+=`
 <div class="col-md-4 mb-4">
 <div class="card p-3 text-center">
@@ -76,17 +83,14 @@ ${car.cameraActive ? "Cerrar Cámaras" : "Acceder Cámaras"}
 
 ${car.cameraActive ? `
 <div class="mt-2">
-
 <button class="btn btn-danger mb-2 w-100"
 onclick="toggleRecording('${car.id}')">
 ${car.recording ? "🔴 Detener Grabación" : "🎥 Comenzar a Grabar"}
 </button>
-
 <button class="btn btn-secondary w-100"
 onclick="takePhoto('${car.id}')">
 📸 Tomar Foto
 </button>
-
 </div>
 ` : ""}
 
@@ -111,13 +115,14 @@ onclick="callPolice('${car.id}')">
 </div>
 </div>
 `;
+}
 
 // ===== MONITOREO =====
 if(monitorContainer){
 monitorContainer.innerHTML+=`
 <div class="col-md-4 text-center mb-4">
 <h6 class="text-info">${car.brand} ${car.model}</h6>
-<canvas id="chart-${car.id}" class="monitor-chart"></canvas>
+<canvas id="chart-${car.id}" width="200" height="200"></canvas>
 </div>
 `;
 }
@@ -130,6 +135,47 @@ drawIndividualCharts(cars);
 }catch(error){
 console.error("Error cargando autos:",error);
 }
+}
+
+// ================= GRAFICA GLOBAL =================
+function updateGlobalChart(cars){
+
+const totalMonitor = document.getElementById("totalMonitor");
+if(!totalMonitor) return;
+
+const normalMonitor = document.getElementById("normalMonitor");
+const alertMonitor = document.getElementById("alertMonitor");
+
+const total = cars.length;
+const alertCount = cars.filter(c => c.theftType && c.theftType !== "").length;
+const normalCount = total - alertCount;
+
+totalMonitor.innerText = total;
+normalMonitor.innerText = normalCount;
+alertMonitor.innerText = alertCount;
+
+if(globalChart) globalChart.destroy();
+
+const ctx = document.getElementById("statusChart").getContext("2d");
+
+globalChart = new Chart(ctx,{
+type:"doughnut",
+data:{
+labels:["Normal","En Alerta"],
+datasets:[{
+data:[normalCount, alertCount],
+backgroundColor:["#00ff88","#ff0000"],
+borderWidth:2
+}]
+},
+options:{
+responsive:false,
+cutout:"65%",
+plugins:{
+legend:{labels:{color:"#ffffff"}}
+}
+}
+});
 }
 
 // ================= CRUD =================
@@ -202,11 +248,11 @@ const car=await res.json();
 car.engineOn=!car.engineOn;
 
 if(car.engineOn){
-    car.latitude=(Math.random()*(32-14)+14).toFixed(6);
-    car.longitude=(Math.random()*(-86+118)-118).toFixed(6);
-    await logEvent(car,`Motor Encendido - Ubicación (${car.latitude}, ${car.longitude})`);
+car.latitude=(Math.random()*(32-14)+14).toFixed(6);
+car.longitude=(Math.random()*(-86+118)-118).toFixed(6);
+await logEvent(car,`Motor Encendido - Ubicación (${car.latitude}, ${car.longitude})`);
 }else{
-    await logEvent(car,"Motor Apagado");
+await logEvent(car,"Motor Apagado");
 }
 
 car.lastUpdate=new Date().toISOString();
@@ -225,10 +271,7 @@ const res=await fetch(`${CARS}/${id}`);
 const car=await res.json();
 
 car.cameraActive=!car.cameraActive;
-
-if(!car.cameraActive){
-    car.recording=false;
-}
+if(!car.cameraActive) car.recording=false;
 
 car.lastUpdate=new Date().toISOString();
 
@@ -315,7 +358,7 @@ body:JSON.stringify(car)
 });
 }
 
-// ================= GOOGLE MAPS =================
+// ================= MAPA =================
 function openGoogleMaps(lat,lng){
 const url=`https://www.google.com/maps?q=${lat},${lng}`;
 window.open(url,'_blank');
@@ -355,42 +398,7 @@ eventType:event,
 timestamp:new Date().toISOString()
 })
 });
-}
-
-// ================= GRAFICA GLOBAL =================
-function updateGlobalChart(cars){
-
-const alertCount=cars.filter(c=>c.theftType && c.theftType!=="").length;
-const normalCount=cars.length-alertCount;
-
-if(globalChart) globalChart.destroy();
-
-const canvas=document.getElementById("statusChart");
-if(!canvas) return;
-
-const ctx=canvas.getContext("2d");
-
-globalChart=new Chart(ctx,{
-type:"doughnut",
-data:{
-labels:["Normal","En Alerta"],
-datasets:[{
-data:[normalCount,alertCount],
-backgroundColor:["#00ff88","#ff0000"],
-borderWidth:2
-}]
-},
-options:{
-responsive:false,
-cutout:"70%",
-plugins:{
-legend:{
-position:"bottom",
-labels:{color:"#ffffff"}
-}
-}
-}
-});
+await loadEvents();
 }
 
 // ================= GRAFICAS INDIVIDUALES =================
@@ -401,9 +409,7 @@ cars.forEach(car=>{
 const canvas=document.getElementById(`chart-${car.id}`);
 if(!canvas) return;
 
-if(carCharts[car.id]){
-carCharts[car.id].destroy();
-}
+if(carCharts[car.id]) carCharts[car.id].destroy();
 
 const ctx=canvas.getContext("2d");
 const hasIncident = car.theftType && car.theftType !== "";
